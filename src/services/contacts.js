@@ -7,55 +7,56 @@ export const getAllContacts = async ({
   perPage = 10,
   sortOrder = SORT_ORDER.ASC,
   sortBy = "name",
-  filter ={},
+  filter = {},
+  userId,
 }) => {
   const limit = perPage;
   const skip = (page - 1) * perPage;
-  const contactsQuery = ContactsCollections.find();
+
+  const contactsQuery = ContactsCollections.find({ userId }); 
 
   if (filter.type) {
     contactsQuery.where("contactType").equals(filter.type);
-  };
-  if (filter.isFavourite) {
+  }
+
+  if (filter.isFavourite !== undefined) {
     contactsQuery.where("isFavourite").equals(filter.isFavourite);
   }
 
   const contactsCount = await ContactsCollections.find()
     .merge(contactsQuery)
     .countDocuments();
+
   const contacts = await contactsQuery
     .skip(skip)
     .limit(limit)
     .sort({ [sortBy]: sortOrder })
     .exec();
+
   const paginationData = calculatePaginationData(contactsCount, page, perPage);
+
   return {
     data: contacts,
     ...paginationData,
   };
 };
 
-
-export const getContactById = async (contactId) => {
-    const contact = await ContactsCollections.findById(contactId);
-    return contact;
+export const getContactById = async (contactId, userId) => {
+  return ContactsCollections.findOne({ _id: contactId, userId });
 };
 
 export const createContact = async (payload) => {
-  const contact = await ContactsCollections.create(payload);
-  return contact;
+  return ContactsCollections.create(payload);
 };
 
-export const updateContact = async (contactId, payload) => {
-  const updatedContact = await ContactsCollections.findByIdAndUpdate(
-    contactId,
+export const updateContact = async (contactId, userId, payload) => {
+  return ContactsCollections.findOneAndUpdate(
+    { _id: contactId, userId },
     payload,
     { new: true }
   );
-  return updatedContact;
 };
 
-export const deleteContact = async (contactId) => {
-  const contact = await ContactsCollections.findOneAndDelete({ _id: contactId });
-  return contact;
+export const deleteContact = async (contactId, userId) => {
+  return ContactsCollections.findOneAndDelete({ _id: contactId, userId });
 };
