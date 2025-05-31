@@ -1,34 +1,33 @@
-import { UsersCollection } from "../db/models/user.js";
-import crypto from "crypto";
+import { User } from "../db/models/user.js"; 
+import crypto, { randomBytes } from "crypto";
 import bcrypt from "bcrypt";
-import { randomBytes } from "crypto";
 import createHttpError from "http-errors";
 import { FIFTEEN_MINUTES, THIRTY_DAYS } from "../constants/index.js";
 import { SessionsCollection } from "../db/models/session.js";
 
+
 export const registerUser = async (payload) => {
+  const user = await User.findOne({ email: payload.email });
+  if (user) throw createHttpError(409, "Email in use");
 
-     const user = await UsersCollection.findOne({ email: payload.email });
-     if (user) throw createHttpError(409, "Email in use");
+  const encryptedPassword = await bcrypt.hash(payload.password, 10);
 
-     const encryptedPassword = await bcrypt.hash(payload.password, 10);
-     return await UsersCollection.create({
-       ...payload,
-       password: encryptedPassword,
-     });
+  return await User.create({
+    ...payload,
+    password: encryptedPassword,
+  });
 };
 
 export const loginUser = async (payload) => {
-  const user = await UsersCollection.findOne({ email: payload.email });
+  const user = await User.findOne({ email: payload.email });
 
-  if (user === null) {
-    throw createHttpError(401, "Email or passwor is incorect");
+  if (!user) {
+    throw createHttpError(401, "Email or password is incorrect");
   }
 
   const isEqual = await bcrypt.compare(payload.password, user.password);
-
-  if (isEqual !== true) {
-    throw createHttpError(401, "Email or passwor is incorect");
+  if (!isEqual) {
+    throw createHttpError(401, "Email or password is incorrect");
   }
 
   await SessionsCollection.deleteOne({ userId: user._id });
@@ -62,16 +61,14 @@ const createSession = () => {
 };
 
 export const refreshSession = async ({ sessionId, refreshToken }) => {
-  const session = await SessionsCollection.findOne({_id: sessionId});
+  const session = await SessionsCollection.findOne({ _id: sessionId });
 
   if (!session) {
     throw createHttpError(401, "Session not found");
   }
 
-  const isSessionTokenExpired =
-    new Date() > new Date(session.refreshTokenValidUntil);
-
-  if (isSessionTokenExpired) {
+  const isExpired = new Date() > new Date(session.refreshTokenValidUntil);
+  if (isExpired) {
     throw createHttpError(401, "Session token expired");
   }
 
