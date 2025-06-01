@@ -1,6 +1,7 @@
 import { ContactsCollections } from "../db/models/contact.js";
 import { calculatePaginationData } from "../utils/calculatePaginationData.js";
 import { SORT_ORDER } from "../constants/index.js";
+import mongoose from "mongoose";
 
 export const getAllContacts = async ({
   page = 1,
@@ -13,7 +14,7 @@ export const getAllContacts = async ({
   const limit = perPage;
   const skip = (page - 1) * perPage;
 
-  const contactsQuery = ContactsCollections.find({ userId }); 
+  const contactsQuery = ContactsCollections.find({ userId });
 
   if (filter.type) {
     contactsQuery.where("contactType").equals(filter.type);
@@ -50,6 +51,14 @@ export const createContact = async (payload) => {
 };
 
 export const updateContact = async (contactId, userId, payload) => {
+  if (!mongoose.Types.ObjectId.isValid(userId)) {
+    throw new Error('Invalid userId');
+  }
+
+  if (!mongoose.Types.ObjectId.isValid(contactId)) {
+    throw new Error('Invalid contactId');
+  }
+
   return ContactsCollections.findOneAndUpdate(
     { _id: contactId, userId },
     payload,

@@ -16,11 +16,9 @@ import { isValidId } from "../middlewares/isValidId.js";
 import { authenticate } from "../middlewares/authenticate.js";
 
 const router = Router();
-
 router.use(authenticate);
 
 router.get("/", ctrlWrapper(getContactsController));
-
 router.get("/:contactId", isValidId, ctrlWrapper(getContactByIdController));
 
 router.post(
@@ -37,5 +35,7 @@ router.patch(
 );
 
 router.delete("/:contactId", isValidId, ctrlWrapper(deleteContactController));
+
+
 
 export default router;
