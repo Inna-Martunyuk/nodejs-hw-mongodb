@@ -3,6 +3,7 @@ import {
   loginUser,
   logoutUser,
   refreshSession,
+  requestReserPassword,
 } from "../services/auth.js";
 import { THIRTY_DAYS } from "../constants/index.js";
 
@@ -87,4 +88,15 @@ const setupSession = (res, session) => {
     httpOnly: true,
     expires: new Date(Date.now() + THIRTY_DAYS),
   });
+};
+
+export const requestResetEmailController = async (req, res) => {
+  const { email } = req.body;
+
+  await requestReserPassword(email);
+  console.log(email);
+  res.end();
+
+
+
 };

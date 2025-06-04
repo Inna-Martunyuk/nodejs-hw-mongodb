@@ -1,9 +1,10 @@
-import { User } from "../db/models/user.js"; 
+import { User } from "../db/models/user.js";
 import crypto, { randomBytes } from "crypto";
 import bcrypt from "bcrypt";
 import createHttpError from "http-errors";
 import { FIFTEEN_MINUTES, THIRTY_DAYS } from "../constants/index.js";
 import { SessionsCollection } from "../db/models/session.js";
+import { sendEmail } from "../utils/sendMail.js";
 
 
 export const registerUser = async (payload) => {
@@ -80,4 +81,16 @@ export const refreshSession = async ({ sessionId, refreshToken }) => {
     userId: session.userId,
     ...newSession,
   });
+};
+
+export const requestReserPassword = async (email) => {
+  const user = await User.findOne({ email });
+  if (user === null) {
+    throw createHttpError(404, "User not found!");
+  };
+  console.log("Sending email to:", email);
+  await sendEmail(
+    user.email,
+    "Reset password",
+    `<p>To reset password please follow this <a href="">link</a></p>`);
 };
