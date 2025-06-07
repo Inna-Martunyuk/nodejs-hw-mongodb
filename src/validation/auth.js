@@ -60,3 +60,23 @@ export const requestResetPasswordSchema = Joi.object({
     "any.required": `"email" is required`,
   }),
 });
+
+export const resetPwdSchema = Joi.object({
+  password: Joi.string()
+    .min(8)
+    .max(30)
+    .pattern(new RegExp("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[!@#$%^&*]).+$"))
+    .required()
+    .messages({
+      "string.base": `"password" should be a type of 'text'`,
+      "string.empty": `"password" cannot be empty`,
+      "string.min": `"password" should have at least {#limit} characters`,
+      "string.max": `"password" should have at most {#limit} characters`,
+      "string.pattern.base": `"password" must contain at least one uppercase letter, one lowercase letter, one number, and one special character (!@#$%^&*)`,
+      "any.required": `"password" is required`,
+    }),
+  token: Joi.string().required().messages({
+    "string.base": "Token must be a string.",
+    "any.required": "Token is required.",
+  }),
+});

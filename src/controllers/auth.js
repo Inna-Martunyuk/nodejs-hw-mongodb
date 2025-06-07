@@ -3,7 +3,8 @@ import {
   loginUser,
   logoutUser,
   refreshSession,
-  requestReserPassword,
+  requestResetPassword,
+  resetPwd,
 } from "../services/auth.js";
 import { THIRTY_DAYS } from "../constants/index.js";
 
@@ -93,10 +94,38 @@ const setupSession = (res, session) => {
 export const requestResetEmailController = async (req, res) => {
   const { email } = req.body;
 
-  await requestReserPassword(email);
-  console.log(email);
-  res.end();
+  try {
+    await requestResetPassword(email);
 
-
-
+    res
+      .status(200)
+      .json({
+        "status": 200,
+        "message": "Reset password email has been successfully sent.",
+        "data": {}
+      });
+  } catch (error) {
+    console.error("Error sending email:", error);
+    res.status(500).json({
+      status: 500,
+      message: "Failed to send the email, please try again later.",
+    });
+  }
 };
+
+
+export const resetPwdController = async (req, res, next) => {
+  try {
+    const { password, token } = req.body;
+    await resetPwd(password, token);
+
+    res.status(200).json({
+      status: 200,
+      message: "Password has been successfully reset.",
+      data: {},
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+

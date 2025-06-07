@@ -51,20 +51,24 @@ export const createContact = async (payload) => {
 };
 
 export const updateContact = async (contactId, userId, payload) => {
-  if (!mongoose.Types.ObjectId.isValid(userId)) {
-    throw new Error('Invalid userId');
+  if (!mongoose.Types.ObjectId.isValid(contactId)) {
+    throw new Error("Invalid contactId");
   }
 
-  if (!mongoose.Types.ObjectId.isValid(contactId)) {
-    throw new Error('Invalid contactId');
+  if (!mongoose.Types.ObjectId.isValid(userId)) {
+    throw new Error("Invalid userId");
   }
+
+  const contactObjectId = new mongoose.Types.ObjectId(contactId);
+  const userObjectId = new mongoose.Types.ObjectId(userId);
 
   return ContactsCollections.findOneAndUpdate(
-    { _id: contactId, userId },
+    { _id: contactObjectId, userId: userObjectId },
     payload,
     { new: true }
   );
 };
+
 
 export const deleteContact = async (contactId, userId) => {
   return ContactsCollections.findOneAndDelete({ _id: contactId, userId });
