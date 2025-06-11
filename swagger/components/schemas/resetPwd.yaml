@@ -1,0 +1,18 @@
+type: object
+required:
+  - email
+  - resetToken
+  - newPassword
+properties:
+  email:
+    type: string
+    format: email
+    example: user@example.com
+
+  resetToken:
+    type: string
+    example: 2f1c7a9a-4e8d-4c65-83f2-9f21b023bdf2
+
+  newPassword:
+    type: string
+    example: NewStrongPass123!

@@ -1,0 +1,14 @@
+type: object
+required:
+  - email
+  - password
+properties:
+  email:
+    type: string
+    format: email
+    example: example@mail.com
+  password:
+    type: string
+    minLength: 6
+    example: Star123!
+

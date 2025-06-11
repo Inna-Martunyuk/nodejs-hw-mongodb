@@ -1,0 +1,42 @@
+tags:
+  - Auth
+summary: User login
+operationId: loginUser
+description: Authenticate a user with email and password. Returns a token on success.
+requestBody:
+  required: true
+  content:
+    application/json:
+      schema:
+        $ref: '../../components/schemas/loginUser.yaml'
+'200':
+  description: Successfully logged in
+  content:
+    application/json:
+      schema:
+        type: object
+        required:
+          - status
+          - message
+          - data
+        properties:
+          status:
+            type: integer
+            example: 200
+          message:
+            type: string
+            example: Successfully logged in a user!
+          data:
+            type: object
+            required:
+              - accessToken
+            properties:
+              accessToken:
+                type: string
+                example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+
+  '400':
+    $ref: '../../components/responses/400.yaml'
+  '401':
+    $ref: '../../components/responses/401.yaml'
+

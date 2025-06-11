@@ -1,0 +1,37 @@
+type: object
+required:
+  - name
+  - phoneNumber
+  - email
+  - isFavourite
+  - contactType
+  - photo
+properties:
+  name:
+    type: string
+    example: John Doe
+
+  phoneNumber:
+    type: string
+    example: +380956785438
+
+  email:
+    type: string
+    format: email
+    example: example@mail.com
+
+  isFavourite:
+    type: boolean
+    example: false
+
+  contactType:
+    type: string
+    enum: [work, home, personal]
+    example: work
+
+  photo:
+    type: string
+    format: binary
+    description: Upload contact photo
+
+

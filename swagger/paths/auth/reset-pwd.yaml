@@ -1,0 +1,43 @@
+tags:
+  - Auth
+summary: Reset password
+operationId: resetPassword
+description: Reset a user's password using a token.
+requestBody:
+  required: true
+  content:
+    application/json:
+      schema:
+        type: object
+        required:
+          - email
+          - token
+          - password
+        properties:
+          email:
+            type: string
+            format: email
+            example: user@example.com
+          token:
+            type: string
+            example: 2f1c7a9a-4e8d-4c65-83f2-9f21b023bdf2
+          password:
+            type: string
+            example: NewStrongPass123!
+responses:
+  '200':
+    description: Password successfully reset
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            message:
+              type: string
+              example: Password has been reset
+  '400':
+    $ref: '../../components/responses/400.yaml'
+  '401':
+    $ref: '../../components/responses/401.yaml'
+  '404':
+    $ref: '../../components/responses/404.yaml'
