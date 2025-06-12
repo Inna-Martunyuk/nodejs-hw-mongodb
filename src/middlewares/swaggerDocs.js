@@ -1,15 +1,13 @@
 import createHttpError from "http-errors";
 import swaggerUI from "swagger-ui-express";
 import fs from "node:fs";
-import path from "node:path";
 import yaml from "js-yaml";
-
-const SWAGGER_YAML_PATH = path.join(process.cwd(), "docs", "openapi.yaml");
+import { SWAGGER_PATH } from "../constants/index.js";
 
 export const swaggerDocs = () => {
   try {
-    const fileContent = fs.readFileSync(SWAGGER_YAML_PATH, "utf8");
-    const swaggerDoc = yaml.load(fileContent); // <-- перетворює YAML на JS-об'єкт
+    const fileContent = fs.readFileSync(SWAGGER_PATH, "utf8");
+    const swaggerDoc = yaml.load(fileContent);
 
     return [...swaggerUI.serve, swaggerUI.setup(swaggerDoc)];
   } catch (err) {
